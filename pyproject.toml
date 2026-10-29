@@ -1,0 +1,17 @@
+[project]
+name = "oc-python-best-practices"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "HuManuOïd", email = "113236459+humanuoid@users.noreply.github.com" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+oc-python-best-practices = "oc_python_best_practices:main"
+
+[build-system]
+requires = ["uv_build>=0.12.16,<0.13.0"]
+build-backend = "uv_build"
