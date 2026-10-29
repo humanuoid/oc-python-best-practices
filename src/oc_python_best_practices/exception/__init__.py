@@ -1,0 +1,1 @@
+"""Exceptions personnalisées du projet."""
