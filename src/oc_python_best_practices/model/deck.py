@@ -1,19 +1,75 @@
-"""Modèle représentant un jeu de 52 cartes."""
+"""Modèle représentant un jeu de cartes."""
 
-import random
+from dataclasses import dataclass, field
 
-from oc_python_best_practices.config.ranks import RANKS
-from oc_python_best_practices.config.suits import SUITS
+from oc_python_best_practices.exception.invalid_card_error import (
+    InvalidCardError,
+)
 from oc_python_best_practices.model.card import Card
 
 
-class Deck(list):
-    """Un jeu de 52 cartes, généré puis mélangé aléatoirement."""
+@dataclass
+class Deck:
+    """Un jeu de cartes, rempli et mélangé par deck_service.
 
-    def __init__(self) -> None:
-        """Crée toutes les combinaisons rang/couleur et les mélange."""
-        super().__init__()
-        for rank in RANKS:
-            for suit in SUITS:
-                self.append(Card(rank=rank, suit=suit))
-        random.shuffle(self)
+    N'accepte que des Card, quelle que soit la voie d'écriture.
+
+    Attributes:
+        _cards: Les cartes du jeu.
+    """
+
+    _cards: list[Card] = field(default_factory=list)
+
+    @property
+    def cards(self) -> tuple[Card, ...]:
+        """Les cartes du jeu, en lecture seule."""
+        return tuple(self._cards)
+
+    def __len__(self) -> int:
+        return len(self._cards)
+
+    def __getitem__(self, index: int) -> Card:
+        return self._cards[index]
+
+    def __iter__(self):
+        return iter(self._cards)
+
+    def __setitem__(self, index: int, card: Card) -> None:
+        """Remplace une carte, après validation du type.
+
+        Raises:
+            InvalidCardError: Si l'objet n'est pas une Card.
+        """
+        if not isinstance(card, Card):
+            raise InvalidCardError(card)
+        self._cards[index] = card
+
+    def append(self, card: Card) -> None:
+        """Ajoute une carte au jeu, après validation du type.
+
+        Raises:
+            InvalidCardError: Si l'objet n'est pas une Card.
+        """
+        if not isinstance(card, Card):
+            raise InvalidCardError(card)
+        self._cards.append(card)
+
+    def extend(self, cards: tuple[Card, ...]) -> None:
+        """Ajoute plusieurs cartes au jeu, chacune validée.
+
+        Args:
+            cards: Les cartes à ajouter.
+
+        Raises:
+            InvalidCardError: Si l'un des objets n'est pas une Card.
+        """
+        for card in cards:
+            self.append(card)
+
+    def pop(self) -> Card:
+        """Retire et retourne la dernière carte du jeu."""
+        return self._cards.pop()
+
+    def clear(self) -> None:
+        """Vide le jeu."""
+        self._cards.clear()

@@ -1,11 +1,28 @@
 """Vue console du jeu de cartes."""
 
+from oc_python_best_practices.config.ranks import RANKS
+from oc_python_best_practices.config.suits import SUITS
 from oc_python_best_practices.model.card import Card
 from oc_python_best_practices.model.player import Player
 
 
 class GameView:
     """Présente les informations et récolte les inputs (console)."""
+
+    def _format_card(self, card: Card) -> str:
+        """Formate une carte (libellé + pictogramme) ou un dos si cachée.
+
+        Args:
+            card: La carte à formater.
+
+        Returns:
+            La chaîne affichable de la carte.
+        """
+        if card.face_down:
+
+            return "🂠"
+
+        return f"{RANKS[card.rank]} {SUITS[card.suit]}"
 
     def show_drawn_card(self, player_name: str, card: Card) -> None:
         """Affiche la carte tirée par un joueur.
@@ -14,7 +31,7 @@ class GameView:
             player_name: Le nom du joueur.
             card: La carte tirée (face cachée affichée si tel).
         """
-        print(f"{player_name} a tiré : {card}")
+        print(f"{player_name} a tiré : {self._format_card(card)}")
 
     def show_revealed_card(self, player_name: str, card: Card) -> None:
         """Affiche la carte révélée d'un joueur.
@@ -23,7 +40,7 @@ class GameView:
             player_name: Le nom du joueur.
             card: La carte révélée.
         """
-        print(f"{player_name} révèle : {card}")
+        print(f"{player_name} révèle : {self._format_card(card)}")
 
     def show_round_winner(self, winner: Player) -> None:
         """Affiche le gagnant de la manche.
@@ -58,12 +75,10 @@ class GameView:
 
         return names
 
-    def ask_replay(self) -> bool:
-        """Demande si les joueurs veulent rejouer (O par défaut).
+    def ask_replay(self) -> str:
+        """Demande si les joueurs veulent rejouer.
 
         Returns:
-            True si oui ou Entrée, False si non.
+            La réponse brute saisie (interprétée par le contrôleur).
         """
-        answer = input("Voulez-vous rejouer une partie ? (O/n) : ")
-
-        return answer.lower() not in ("n", "non")
+        return input("Voulez-vous rejouer une partie ? (O/n) : ")
