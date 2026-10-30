@@ -23,11 +23,14 @@ class Card:
     def __str__(self) -> str:
         """Affiche la carte (libellé + pictogramme) ou un dos si cachée."""
         if self.face_down:
+
             return "🂠"
+
         return f"{RANKS[self.rank]} {SUITS[self.suit]}"
 
     def __repr__(self) -> str:
         """Représentation développeur de la carte."""
+
         return (
             f"Card(rank={self.rank!r}, suit={self.suit!r}, "
             f"face_down={self.face_down!r})"

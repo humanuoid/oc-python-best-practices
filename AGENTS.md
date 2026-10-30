@@ -7,6 +7,7 @@ Il prime sur toute instruction contradictoire de la session. Il vaut pour tous l
 
 - Emmanuel est développeur PHP senior en reconversion Data Engineer (formation OpenClassrooms).
 - Ce dépôt contient ses exercices du cours « Écrivez du code Python maintenable » : l'application MVC (jeu de cartes), puis les refacteurs SOLID / STUPID.
+- État d'avancement : **le Modèle est terminé** (exercice 1 : `Card`, `Deck`, `Hand`, `Player`) ; **le chapitre en cours est le Contrôleur et la Vue** ; la partie SOLID / STUPID viendra ensuite.
 - Objectif : **développement assisté par IA**. L'IA écrit le code — la réflexion, jamais.
 
 ## Les deux rôles
@@ -53,8 +54,9 @@ Emmanuel annonce le mode en tête de message ; en cas de doute, l'IA demande.
 2. Utiliser un concept Python hors du périmètre ci-dessous sans le signaler et obtenir l'accord.
 3. Dépasser la spécification : pas de code bonus, pas de fichier créé, déplacé ou renommé hors demande.
 4. Deviner une intention : demander.
-5. Appliquer les principes SOLID / STUPID par anticipation : ils sont en cours d'apprentissage ; l'IA ne les introduit qu'à la demande d'Emmanuel, au fil de son avancement.
-6. Exécuter l'application ou les tests sans demande.
+5. **Ne pas toucher au Modèle** (`Card`, `Deck`, `Hand`, `Player`) sans demande explicite d'Emmanuel — il est terminé et validé ; le cours y reviendra lui-même en partie SOLID (la logique de comparaison dans `Card` sera remise en question : ne pas l'anticiper).
+6. Appliquer les principes SOLID / STUPID par anticipation : ils sont en cours d'apprentissage ; l'IA ne les introduit qu'à la demande d'Emmanuel, au fil de son avancement.
+7. Exécuter l'application ou les tests sans demande.
 
 ## Périmètre Python de référence
 
@@ -66,8 +68,8 @@ Concepts couverts par les cours suivis (« Apprenez les bases du langage Python 
 - fonctions : paramètres par défaut et nommés, annotations, retours multiples, `*args`/`**kwargs`, fonctions de première classe, `lambda`, décorateurs (`@`, `functools.wraps`, fabrique `@dec(arg)`) ;
 - classes : `__init__`, `self`, attributs, méthodes, héritage simple (ex. `Deck(list)`), `@property`, `@dataclass` ;
 - exceptions : `try/except/else/finally`, `raise`, `raise ... from` ;
-- modules et packages, `if __name__ == "__main__"`, `with open`, package csv, f-strings, concaténation implicite de littéraux ;
-- PEP 8 ; patterns vus en cours : Constant, Décorateur, MVC (en cours d'implémentation).
+- modules et packages, `if __name__ == "__main__"`, `with open`, package csv, `input()` / `print()`, f-strings, concaténation implicite de littéraux ;
+- PEP 8 ; patterns vus en cours : Constant, Décorateur, MVC (Modèle implémenté ; Contrôleur et Vue en cours).
 
 **Hors périmètre à ce jour (exemples)** : générateurs (`yield`), async, descripteurs, metaclasses, `__slots__`, `ABC`/`Protocol`, héritage multiple, context managers maison, unpacking avancé, compréhensions imbriquées.
 
@@ -83,17 +85,26 @@ Concepts couverts par les cours suivis (« Apprenez les bases du langage Python 
 
 ## Spécifications de l'application (référence de l'IA)
 
-Jeu de cartes standard de 52 cartes :
+Jeu de cartes standard de 52 cartes, **≤ 5 joueurs** nommés, carte la plus haute gagne : **As > Roi > Reine > Valet > 10 … > 2** ; égalité départagée par la couleur : **Trèfle > Pique > Cœur > Carreau**.
 
-- le nombre de joueurs est sélectionné, **limité à cinq**, noms saisis ;
-- mélange du jeu (`shuffle`), distribution d'une carte par joueur face cachée (`draw_card`) ;
-- révélation des cartes de tous les joueurs ;
-- le plus haut rang gagne : **As > Roi > Reine > Valet > 10 … > 2** ;
-- l'égalité se départage par la couleur : **Trèfle > Pique > Cœur > Carreau** ;
-- affichage du nom et de la carte du gagnant ;
-- toutes les cartes retournent dans la pile, puis nouveau mélange.
-
-Modèle attendu (celui du cours) : `SUITS` / `RANKS` (constantes), `Card` (rang + couleur), `Deck` (contient les cartes), `Hand` (0 à n cartes), `Player` (nom + main).
+**Modèle — terminé, ne pas modifier sans demande** : `SUITS` / `RANKS` (constantes), `Card` (rang + couleur), `Deck` (les cartes), `Hand` (0 à n cartes), `Player` (nom + main).
 Note du cours : l'héritage de `list` est une commodité pédagogique ; `UserList` est recommandé hors cours — la Revue peut le rappeler.
+
+**Chapitre en cours — le Contrôleur et la Vue**. Le use case à couvrir, étape par étape :
+
+- démarrer le jeu : instancier le Modèle (jeu de 52 cartes + liste de joueurs vide) ;
+- saisir les noms des joueurs, puis signaler la fin de la saisie ;
+- battre le jeu et distribuer une carte par joueur, face cachée ;
+- révéler les cartes, identifier le vainqueur et l'afficher (nom + carte) ;
+- reconstituer le jeu (toutes les cartes retournent dans la pile), puis rejouer ou quitter.
+
+Contraintes d'architecture imposées par le chapitre (à faire respecter, pas à négocier) :
+
+- le Contrôleur séquence les interactions ; il utilise le Modèle et la Vue ;
+- la Vue **présente** les informations et **récolte** les inputs — elle ne les traite jamais (c'est le Contrôleur) ;
+- la Vue est créée par le code appelant et **passée au Contrôleur**, jamais créée par lui — chaque couche reste remplaçable ;
+- le Modèle n'est couplé à aucune autre couche.
+
+La décomposition en classes, méthodes et signatures reste **le choix d'Emmanuel** : ces specs disent quoi livrer, jamais comment.
 
 Tout écart entre le code généré et ces specs se signale, il ne se corrige jamais en silence.

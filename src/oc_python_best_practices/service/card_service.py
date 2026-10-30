@@ -25,6 +25,7 @@ def get_strongest_card(card_a: Card, card_b: Card) -> Card:
     rank_b = ranks.index(card_b.rank)
 
     if rank_a != rank_b:
+
         return card_a if rank_a < rank_b else card_b
 
     suit_a = suits.index(card_a.suit)
